@@ -14,9 +14,8 @@ export class PaymentsController {
     private readonly uploadService: UploadService,
   ) { }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() createPaymentDto: CreatePaymentDto,
@@ -29,21 +28,19 @@ export class PaymentsController {
     return this.paymentsService.create(createPaymentDto, imageUrl);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const imageUrl = await this.uploadService.uploadFile(file);
     return { imageUrl };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(): Promise<Payment[]> {
     return this.paymentsService.findAll();
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('report')
   async generateReport(@Body() transactionReportDto: TransactionReportDto): Promise<{ payments: Payment[], total: number }> {
     return this.paymentsService.generateReport(transactionReportDto);
